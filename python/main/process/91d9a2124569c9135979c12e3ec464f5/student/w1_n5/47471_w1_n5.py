@@ -1,0 +1,6 @@
+print("5 + 3 = 8")
+print("5 - 1 = 4")
+print("4 * 4 = 16 ")
+print("\'10 / 2 = 1\'")
+print("10 % 2 = 0")
+print("\\We \\are \\the \\ChampioN.")
