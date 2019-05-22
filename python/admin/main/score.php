@@ -14,23 +14,25 @@ if ($_SESSION['status'] != "admin") {
 }
 $sql = "select * from server where id=1";
 $query = mysqli_query($conn, $sql);
-$result= mysqli_fetch_array($query);
+$result = mysqli_fetch_array($query);
 $i = $result['class'];
 if ($_POST['submit_class']) {
-    $class_sql = "update server set class='".$_POST['class']."' where id=1";
-    if($conn->query($class_sql) === TRUE){
+    $class_sql = "update server set class='" . $_POST['class'] . "' where id=1";
+    if ($conn->query($class_sql) === TRUE) {
         echo "<script>alert('Update class sucessful')</script>";
         header("Refresh:0");
     }
 }
-$sql_score = "select * from student where class='".$i."' order by quiz_t1_n1+quiz_t1_n2+quiz_t1_n3 DESC";
-$query_score = mysqli_query($conn, $sql_score);
+$sql_problem = "select * from problem";
+$result_problem = mysqli_query($conn, $sql_problem);
+$sql_student = "select * from student where class='" . $i . "'";
+$result_student = mysqli_query($conn, $sql_student);
 ?>
 <!doctype html>
 <html lang="en">
 
 <head>
-<title>Admin</title>
+    <title>Admin</title>
     <meta charset="utf-8">
     <link rel="icon" href="../../../img/cnrlogo.png">
     <link rel="stylesheet" href="../../main/style/main.css">
@@ -46,46 +48,62 @@ $query_score = mysqli_query($conn, $sql_score);
         <li><a href="aprov.php">APROV</a></li>
         <li><a href="manual.php">MANUAL</a></li>
         <li><a href="file.php">FILE</a></li>
-        <li><a class="active" href="#">QUIZ</a></li>
-        <li><a href="score.php">Score</a></li>
+        <li><a href="quiz.php">QUIZ</a></li>
+        <li><a class="active" href="score.php">Score</a></li>
         <li style="float:right"><a href="../../logout.php">Logout</a></li>
     </ul>
 </body>
 <center>
     <div class="container">
-        Class : <?php echo $i ?>
-    <form action="" method="post">
+        <h2>Score : <?php echo $i ?></h2>
+        <form action="" method="post">
+            Class :
             <select style="width:100px;" name="class">
                 <?php for ($j = 1; $j <= 4; $j++) { ?>
                     <option value="<?php echo $j ?>"><?php echo $j; ?></option>
                 <?php } ?>
             </select>
             <input type="submit" name="submit_class" value="submit">
-            <br>
         </form>
-        <br>        
-        <table>
+        <br>
+        <table border="1">
             <tr>
-                <th>SID</th>
-                <th>Name</th>
-                <th>Quiz_N1</th>
-                <th>Quiz_N2</th>
-                <th>Quiz_N3</th>
-                <th>Sum</th>
+                <th>student id</th>
+                <th>name</th>
+                <?php while ($row_week = mysqli_fetch_array($result_problem)) { ?>
+                    <th><?php echo $row_week['week']; ?></th>
+                <?php } ?>
+                <th>Score</th>
             </tr>
-            <?php while($row_score = mysqli_fetch_array($query_score)){ ?>
-            <tr>
-                <td><?php echo $row_score['username'];?></td>
-                <td><?php echo $row_score['name'];?></td>
-                <td style="text-align:center;"><?php if($row_score['quiz_t1_n1'] == ""){ echo '0'; }else{ echo $row_score['quiz_t1_n1']; } ?></td>
-                <td style="text-align:center;"><?php if($row_score['quiz_t1_n2'] == ""){ echo '0'; }else{ echo $row_score['quiz_t1_n2']; } ?></td>
-                <td style="text-align:center;"><?php if($row_score['quiz_t1_n3'] == ""){ echo '0'; }else{ echo $row_score['quiz_t1_n3']; } ?></td>
-                <td style="text-align:center;"><?php echo $row_score['quiz_t1_n1'] + $row_score['quiz_t1_n2']  + $row_score['quiz_t1_n3'] ; ?></td>
-            </tr>
+            <?php while ($row_aprov = mysqli_fetch_array($result_student)) { ?>
+                <tr>
+                    <td><?php echo $row_aprov['username']; ?></td>
+                    <td><?php echo $row_aprov['name']; ?></td>
+                    <?php $i = 0; ?>
+                    <?php $sql = "select * from problem";
+                    $result = mysqli_query($conn, $sql);
+                    $sum = 0;
+                    $sql_student = "select * from student where username='" . $row_aprov['username'] . "'"; ?>
+                    <?php while ($row_week = mysqli_fetch_array($result)) { ?>
+                        <td><?php $score = $row_week['week'];
+                            if ($row_aprov[$score] == 'upload') {
+                                echo 0;
+                            } else {
+                                echo $row_aprov[$score];
+                            }
+                            $sum += $row_aprov[$score]; ?></td>
+                        <?php $i++ ?>
+                    <?php } ?>
+                    <td><?php echo $sum ?></td>
+                </tr>
             <?php } ?>
         </table>
     </div>
 </center>
-<?php header("Refresh:10") ?>
+
 </html>
+<?php
+
+
+?>
 <?php mysqli_close($conn); ?>

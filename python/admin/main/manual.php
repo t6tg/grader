@@ -4,12 +4,12 @@ session_start();
 require_once("../../../Database/Database.php");
 if ($_SESSION['username'] == "") {
     echo "<script>alert('Please Login !!')</script>";
-    header("Refresh:0 , url=../logout.php");
+    header("Refresh:0 , url=../../logout.php");
     exit();
 }
 if ($_SESSION['status'] != "admin") {
     echo "<script>alert('This page for admin only!')</script>";
-    header("Refresh:0 , url=../logout.php");
+    header("Refresh:0 , url=../../logout.php");
     exit();
 }
 $sql_manual = "select * from manual";
@@ -20,7 +20,7 @@ $query_manual = mysqli_query($conn, $sql_manual);
 <html lang="en">
 
 <head>
-    <title>Student</title>
+<title>Admin</title>
     <meta charset="utf-8">
     <link rel="icon" href="../../../img/cnrlogo.png">
     <link rel="stylesheet" href="../../main/style/main.css">
@@ -37,6 +37,7 @@ $query_manual = mysqli_query($conn, $sql_manual);
         <li><a class="active" href="manual.php">MANUAL</a></li>
         <li><a href="file.php">FILE</a></li>
         <li><a href="quiz.php">QUIZ</a></li>
+        <li><a href="score.php">Score</a></li>
         <li style="float:right"><a href="../../logout.php">Logout</a></li>
     </ul>
 </body>
@@ -54,7 +55,12 @@ $query_manual = mysqli_query($conn, $sql_manual);
             <?php while ($row_manual = mysqli_fetch_array($query_manual)) { ?>
                 <tr>
                     <td><?php echo $row_manual['username'] ?></td>
-                    <td><a href="../../main/process/<?php echo $row_manual['file'] ?>"><img src="../../main/process/<?php echo $row_manual['file'] ?>" width="100px"></a></td>
+                    <?php $parts = explode('.', $row_manual['file'] ); ?>
+                    <?php if($parts[1] == "py"){ ?>
+                        <td><a target="_blank" href="../../main/process/<?php echo $row_manual['file']  ?>"><img src="./images/placeholder.png"s width="100px"></a></td>
+                    <?php }else {?>
+                    <td><a target="_blank" href="../../main/process/<?php echo $row_manual['file']  ?>"><img src="../../main/process/<?php echo $row_manual['file'] ?>"s width="100px"></a></td>
+                    <?php } ?>
                     <td><?php echo $row_manual['week'] ?></td>
                     <td><a href="manual.php?username=<?php echo $row_manual['username']; ?>&week=<?php echo $row_manual['week']; ?>&pass=1&file=<?php echo $row_manual['file'];?>">Pass</a></td>
                     <td><a href="manual.php?username=<?php echo $row_manual['username']; ?>&week=<?php echo $row_manual['week']; ?>&pass=0&file=<?php echo $row_manual['file'];?>">No Pass</a></td>
@@ -64,7 +70,9 @@ $query_manual = mysqli_query($conn, $sql_manual);
         </table>
     </div>
 </center>
-
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </html>
 <?php
 if ($_GET['username']) {

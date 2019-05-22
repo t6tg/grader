@@ -4,12 +4,12 @@ session_start();
 require_once("../../../Database/Database.php");
 if ($_SESSION['username'] == "") {
     echo "<script>alert('Please Login !!')</script>";
-    header("Refresh:0 , url=../logout.php");
+    header("Refresh:0 , url=../../logout.php");
     exit();
 }
 if ($_SESSION['status'] != "admin") {
     echo "<script>alert('This page for admin only!')</script>";
-    header("Refresh:0 , url=../logout.php");
+    header("Refresh:0 , url=../../logout.php");
     exit();
 }
 $sql = "select * from server where id=1";
@@ -33,7 +33,7 @@ $row_serve = mysqli_fetch_array($result_serve);
 <html lang="en">
 
 <head>
-    <title>Student</title>
+<title>Admin</title>
     <meta charset="utf-8">
     <link rel="icon" href="../../../img/cnrlogo.png">
     <link rel="stylesheet" href="../../main/style/main.css">
@@ -50,6 +50,7 @@ $row_serve = mysqli_fetch_array($result_serve);
         <li><a href="manual.php">MANUAL</a></li>
         <li><a href="file.php">FILE</a></li>
         <li><a href="quiz.php">QUIZ</a></li>
+        <li><a href="score.php">Score</a></li>
         <li style="float:right"><a href="../../logout.php">Logout</a></li>
     </ul>
 </body>
@@ -101,12 +102,14 @@ $row_serve = mysqli_fetch_array($result_serve);
                     <th>CLR</th>
                     <th>student id</th>
                     <th>name</th>
+                    <th>Reset Pw</th>
                 </tr>
                 <?php while ($row_aprov = mysqli_fetch_array($result_student)) { ?>
                     <tr>
                         <td><a href="aprov.php?username=<?php echo $row_aprov['username'] ?>" name="clr" >CLR</a></td>
                         <td><?php echo $row_aprov['username']; ?></td>
                         <td><?php echo $row_aprov['name']; ?></td>
+                        <td><a href="aprov.php?id=<?php echo $row_aprov['username']; ?>">Reset</a></td>
                     </tr>
                 <?php } ?>
             </table>
@@ -115,6 +118,13 @@ $row_serve = mysqli_fetch_array($result_serve);
     <br>
 </div>
 <?php
+if($_GET['id']){
+    $change_pass =  md5($_GET['id']);
+    $sql_change_pass = "update student set password='$change_pass' where username='".$_GET['id']."' ";
+    if($conn->query($sql_change_pass) == TRUE){
+     header("Location:aprov.php");
+    }
+}
 if($_GET['username']){
    $sql_clr = "update student set ip='' , ban=1 where username='".$_GET['username']."' ";
    if($conn->query($sql_clr)){
@@ -124,15 +134,13 @@ if($_GET['username']){
 if($_POST['quiz']){
     $serve_sql = "update student set server='".$_POST['server']."' where class='".$i."'";
     if($conn->query($serve_sql) === TRUE){
-        echo "<script>alert('Update quiz server sucessful')</script>";
-        header("Refresh:0,url=aprov.php");
+        header("Location:aprov.php");
     }
 }
 if($_POST['ban']){
     $serve_sql = "update student set ban=1 , ip=''";
     if($conn->query($serve_sql) === TRUE){
-        echo "<script>alert('Update ban sucessful')</script>";
-        header("Refresh:0,url=aprov.php");
+        header("Location:aprov.php");
     }
 }
 ?>

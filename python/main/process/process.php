@@ -12,75 +12,88 @@ $result_score = mysqli_fetch_array($query);
 $score_old = $result_score["$week"];
 $score =  $result['score'];
 $student = $_SESSION['username'];
+$sql_student = "SELECT * FROM student where username=$student";
+$query_student =  mysqli_query($conn, $sql_student);
+$result_student = mysqli_fetch_array($query_student);
 $sfile = "$student" . _ . "$week";
 $path = "91d9a2124569c9135979c12e3ec464f5/student/$week/";
 $type = strrchr($_FILES['file']['name'], ".");
 $namefile = $path . $sfile . $type;
 $sql_server = "select * from server where id=1";
-$result_server = mysqli_query($conn,$sql_server);
+$result_server = mysqli_query($conn, $sql_server);
 $row_server = mysqli_fetch_array($result_server);
-if($row_server['server_st'] == 1){
-if ($result['week'] != $_POST['week']) {
-    echo "<script>alert('ไม่มีข้อนี้อยู่ในระบบ')</script>";
-    header("Refresh:0;url=../index.php");
-} else {
-    if ($result['status'] == 0) {
-        echo "<script>alert('ข้อนี้ถูกปิดอยู่')</script>";
+if ($row_server['server_st'] == 1) {
+    if ($result_student['server'] == 1) {
+    if ($result['week'] != $_POST['week']) {
+        echo "<script>alert('ไม่มีข้อนี้อยู่ในระบบ')</script>";
         header("Refresh:0;url=../index.php");
     } else {
-        if ($result['type'] == 0) {
-            if ($type == ".jpg" || $type == ".jpeg") {
-                $file_sql = "insert into manual(week,username,file) values('".$week."' , '".$student."' , '".$namefile."')";
-                if($conn->query($file_sql) === TRUE){
-                move_uploaded_file($_FILES['file']['tmp_name'], $namefile);
-                header("Refresh:0;url=../loading.php");
-                $add_sql  =   "update student set $week='upload' where username=$student";
-                mysqli_query($conn, $add_sql);
-                }else{
-                    echo "<script>alert('ผิดพลาด')</script>";
+        if ($result['status'] == 0) {
+            echo "<script>alert('ข้อนี้ถูกปิดอยู่')</script>";
+            header("Refresh:0;url=../index.php");
+        } else {
+            if ($result['type'] == 0) {
+                if ($type == ".jpg" || $type == ".jpeg") {
+                    $file_sql = "insert into manual(week,username,file) values('" . $week . "' , '" . $student . "' , '" . $namefile . "')";
+                    if ($conn->query($file_sql) === TRUE) {
+                        move_uploaded_file($_FILES['file']['tmp_name'], $namefile);
+                        header("Refresh:0;url=../loading.php");
+                        $add_sql  =   "update student set $week='upload' where username=$student";
+                        mysqli_query($conn, $add_sql);
+                    } else {
+                        echo "<script>alert('ผิดพลาด')</script>";
+                        header("Refresh:0;url=../index.php");
+                    }
+                } else {
+                    echo "<script>alert('นามสกุลของไฟล์ไม่ถูกต้อง')</script>";
                     header("Refresh:0;url=../index.php");
                 }
-            } else {
-                echo "<script>alert('นามสกุลของไฟล์ไม่ถูกต้อง')</script>";
-                header("Refresh:0;url=../index.php");
-            }
-        } else if($result['type'] == 1) {
-            if ($type == ".py") {
-                move_uploaded_file($_FILES['file']['tmp_name'], $namefile);
-                $output = exec("ctc.bat 91d9a2124569c9135979c12e3ec464f5/student/$week/$sfile 91d9a2124569c9135979c12e3ec464f5/input/$week/$week 91d9a2124569c9135979c12e3ec464f5/student/$week/$sfile");
-                //end-compile
-                $data1 = file_get_contents("91d9a2124569c9135979c12e3ec464f5/student/$week/$sfile.sol");
-                $data2 = file_get_contents("91d9a2124569c9135979c12e3ec464f5/ans/$week.sol");
-                if ($data1 != $data2) {
-                    $add_sql  =   "update student set $week=0 where username=$student";
-                    mysqli_query($conn, $add_sql);
+            } else if ($result['type'] == 1) {
+                if ($type == ".py") {
+                    move_uploaded_file($_FILES['file']['tmp_name'], $namefile);
+                    $output = exec("ctc.bat 91d9a2124569c9135979c12e3ec464f5/student/$week/$sfile 91d9a2124569c9135979c12e3ec464f5/input/$week/$week 91d9a2124569c9135979c12e3ec464f5/student/$week/$sfile");
+                    //end-compile
+                    $data1 = file_get_contents("91d9a2124569c9135979c12e3ec464f5/student/$week/$sfile.sol");
+                    $data2 = file_get_contents("91d9a2124569c9135979c12e3ec464f5/ans/$week.sol");
+                    if ($data1 != $data2) {
+                        $add_sql  =   "update student set $week=0 where username=$student";
+                        mysqli_query($conn, $add_sql);
+                    }
+                    if ($data1 == $data2) {
+                        $add_sql  =   "update student set $week=$score  where username=$student";
+                        mysqli_query($conn, $add_sql);
+                    }
+                    unlink("91d9a2124569c9135979c12e3ec464f5/student/$week/$sfile.sol");
+                    header("Refresh:0;url=../loading.php");
+                } else {
+                    echo "<script>alert('นามสกุลของไฟล์ไม่ถูกต้อง')</script>";
+                    header("Refresh:0;url=../index.php");
                 }
-                if ($data1 == $data2) {
-                    $add_sql  =   "update student set $week=$score  where username=$student";
-                    mysqli_query($conn, $add_sql);
+            } else if ($result['type'] == 2) {
+                if ($type == ".py") {
+                    $file_sql = "insert into manual(week,username,file) values('" . $week . "' , '" . $student . "' , '" . $namefile . "')";
+                    if ($conn->query($file_sql) === TRUE) {
+                        move_uploaded_file($_FILES['file']['tmp_name'], $namefile);
+                        header("Refresh:0;url=../loading.php");
+                        $add_sql  =   "update student set $week='upload' where username=$student";
+                        mysqli_query($conn, $add_sql);
+                    } else {
+                        echo "<script>alert('ผิดพลาด')</script>";
+                        header("Refresh:0;url=../index.php");
+                    }
+                } else {
+                    echo "<script>alert('นามสกุลของไฟล์ไม่ถูกต้อง')</script>";
+                    header("Refresh:0;url=../index.php");
                 }
-                unlink("91d9a2124569c9135979c12e3ec464f5/student/$week/$sfile.sol");
-                header("Refresh:0;url=../loading.php");
-            } else {
-                echo "<script>alert('นามสกุลของไฟล์ไม่ถูกต้อง')</script>";
-                header("Refresh:0;url=../index.php");
             }
-        }else{
-            if ($type == ".py") {
-                move_uploaded_file($_FILES['file']['tmp_name'], $namefile);
-                //header("Refresh:0;url=../loading.php");
-                $add_sql  =   "update student set $week='upload' where username=$student";
-                mysqli_query($conn, $add_sql);
-            } else {
-                echo "<script>alert('นามสกุลของไฟล์ไม่ถูกต้อง')</script>";
-                header("Refresh:0;url=../index.php");
-            }
-        }
             mysqli_close($conn);
-
+        }
     }
-}
 }else{
+    echo "<script>alert('User Closed')</script>";
+    header("Refresh:0;url=../index.php");
+}
+} else {
     echo "<script>alert('Grader Closed')</script>";
-                header("Refresh:0;url=../index.php");
+    header("Refresh:0;url=../index.php");
 }

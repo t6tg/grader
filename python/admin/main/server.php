@@ -4,12 +4,12 @@ session_start();
 require_once("../../../Database/Database.php");
 if ($_SESSION['username'] == "") {
     echo "<script>alert('Please Login !!')</script>";
-    header("Refresh:0 , url=../logout.php");
+    header("Refresh:0 , url=../../logout.php");
     exit();
 }
 if ($_SESSION['status'] != "admin") {
     echo "<script>alert('This page for admin only!')</script>";
-    header("Refresh:0 , url=../logout.php");
+    header("Refresh:0 , url=../../logout.php");
     exit();
 }
 $sql_server = "select * from server where id = 1";
@@ -30,7 +30,7 @@ if($result_server['ban'] == 0){
 <html lang="en">
 
 <head>
-    <title>Student</title>
+<title>Admin</title>
     <meta charset="utf-8">
     <link rel="icon" href="../../../img/cnrlogo.png">
     <link rel="stylesheet" href="../../main/style/main.css">
@@ -47,7 +47,8 @@ if($result_server['ban'] == 0){
         <li><a href="manual.php">MANUAL</a></li>
         <li><a href="file.php">FILE</a></li>
         <li><a href="quiz.php">QUIZ</a></li>
-        <li style="float:right"><a href="../logout.php">Logout</a></li>
+        <li><a href="score.php">Score</a></li>
+        <li style="float:right"><a href="../../logout.php">Logout</a></li>
     </ul>
 </body>
 <div class="container">

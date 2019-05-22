@@ -65,9 +65,11 @@ if ($row_ban['ban'] == 0 && $row_server['ban'] == 1) {
             <?php $score = $row['score']; ?>
             <?php if ($row['type'] == "1") {
                 $type = "( Auto )";
-            } else {
+            } else if($row['type'] == "0"){
                 $type = "( Manual )";
-            } ?>
+            }else{
+                $type = "( Manual Error )";
+            }?>
             <form action="process/process.php" method="post" enctype="multipart/form-data">
                 <div class="card">
                     <div style="margin-left: 20px;margin-top:20px;"> <b><?php echo $week . $type; ?>
@@ -97,6 +99,7 @@ if ($row_ban['ban'] == 0 && $row_server['ban'] == 1) {
     <p style="font-size:13px">
         ***หมายเหตุ : ( Manual ) อัพไฟล์ได้เฉพาะนามสกุล .jpg หรือ .jpeg เท่านั้น ยกเว้นเหตุจำเป็นครูจะเปิดให้ลงไฟล์ .py ได้ <br>
         ( Auto ) อัพได้เฉพาะไฟล์ .py เท่านั้น<br>
+        ( Manual Error ) อาจเกิดปัญหาเรื่องการตรวจครูจจะเปิดระบบตรวจด้วย Manual แต่ แบบนี้จะส่งได้เฉพาะไฟล์ .py เท่านั้น<br>
         ( Uploaded ) แสดงว่า upload ไฟล์สำเร็จให้หากคะแนนขึ้นแสดงว่าทำข้อนั้นถูก<br>
         ข้อที่เป็น ( Manual ) เครื่องจะไม่ตรวจแต่ครูจะเข้าไปตรวจและให้คะแนนภายหลัง<br>
         อย่าส่งไฟล์ซ้ำกันหลายๆครั้ง อาจทำให้คะแนนช่องอื่นๆหายได้<br><br>

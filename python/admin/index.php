@@ -20,7 +20,7 @@ $query_work = mysqli_query($conn, $sql_work);
 <html lang="en">
 
 <head>
-    <title>Student</title>
+    <title>Admin</title>
     <meta charset="utf-8">
     <link rel="icon" href="../../img/cnrlogo.png">
     <link rel="stylesheet" href="../main/style/main.css">
@@ -37,6 +37,7 @@ $query_work = mysqli_query($conn, $sql_work);
         <li><a href="main/manual.php">MANUAL</a></li>
         <li><a href="main/file.php">FILE</a></li>
         <li><a href="main/quiz.php">QUIZ</a></li>
+        <li><a href="main/score.php">Score</a></li>
         <li style="float:right"><a href="../logout.php">Logout</a></li>
     </ul>
 </body>
@@ -51,6 +52,8 @@ $query_work = mysqli_query($conn, $sql_work);
                 <tr>
                     <th>File Name</th>
                     <th>Status</th>
+                    <th>Type</th>
+                    <th>Error</th>
                 </tr>
                 <?php while ($row_work = mysqli_fetch_array($query_work)) { ?>
                     <tr>
@@ -61,6 +64,25 @@ $query_work = mysqli_query($conn, $sql_work);
                             <?php } ?>
                             <?php if ($row_work['status'] == 0) { ?>
                                 <a href="index.php?week=<?php echo $row_work['week'] ?>&status=1">off</a>
+                            <?php } ?>
+                        </td>
+                        <td>
+                            <?php if ($row_work['type'] == 1) { ?>
+                                <a href="index.php?weektype=<?php echo $row_work['week'] ?>&type=0">Auto</a>
+                            <?php } ?>
+                            <?php if ($row_work['type'] == 0) { ?>
+                                <a href="index.php?weektype=<?php echo $row_work['week'] ?>&type=1">Manual</a>
+                            <?php } ?>
+                            <?php if ($row_work['type'] == 2) { ?>
+                               -
+                            <?php } ?>
+                        </td>
+                        <td>
+                            <?php if ($row_work['type'] == 2) { ?>
+                                <a style="color:red" href="index.php?weekerror=<?php echo $row_work['week'] ?>&type=0">UnError</a>
+                            <?php } ?>
+                            <?php if ($row_work['type'] != 2) { ?>
+                                <a style="color:red" href="index.php?weekerror=<?php echo $row_work['week'] ?>&type=2">Error</a>
                             <?php } ?>
                         </td>
                     </tr>
@@ -74,8 +96,19 @@ $query_work = mysqli_query($conn, $sql_work);
 if ($_GET['week']) {
     $sql_update = "update problem set status='" . $_GET['status'] . "' where week='" . $_GET['week'] . "'";
     if ($conn->query($sql_update) === TRUE) {
-        "<script>alert('Update open week Success')</script>";
-        header("Refresh:0,url=index.php");
+        echo "<script> location.replace('index.php'); </script>";
+    }
+}
+if ($_GET['weektype']) {
+    $sql_update = "update problem set type='" . $_GET['type'] . "' where week='" . $_GET['weektype'] . "'";
+    if ($conn->query($sql_update) === TRUE) {
+        echo "<script> location.replace('index.php'); </script>";
+    }
+}
+if ($_GET['weekerror']) {
+    $sql_update = "update problem set type='" . $_GET['type'] . "' where week='" . $_GET['weekerror'] . "'";
+    if ($conn->query($sql_update) === TRUE) {
+        echo "<script> location.replace('index.php'); </script>";
     }
 }
 

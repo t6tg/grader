@@ -21,6 +21,7 @@ date_default_timezone_set('asia/bangkok');
                  <img src="./img/logo.png" alt="logo" width="200">
                  <p></p>
                  <a class="python" href="python/">Python</a><br><br>
+                 <a class="python" href="java/">Java</a><br><br>
                  <a class="python" href="assignment/">Assignment</a>
                 </div><br>
                 <p style="font-size:11px;"> &copy; สงวนลิขสิทธิ์ 2561 - <?php echo date('Y')  +543?> โดย    ครูธนวัฒน์ กุลาตี <br> ศูนย์คอมพิวเตอร์และเทคโนโลยี โรงเรียนชิโนรสวิทยาลัย</p>
