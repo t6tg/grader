@@ -1,5 +1,5 @@
 # grader
-By Thanawat Gulati
-FB : mjamesthanawat
-IG : m.mjames
-Add Copyright By Thanawat Gulati in Your Website
+By Thanawat Gulati <br>
+FB : mjamesthanawat <br>
+IG : m.mjames <br>
+Add Copyright By Thanawat Gulati in Your Website <br>
